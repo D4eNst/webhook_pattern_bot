@@ -21,6 +21,7 @@ async def get_pool_connect() -> asyncpg.pool.Pool | None:
 
     pool_connect = None
 
+    logging.info("Creating pull")
     try:
         pool_connect = await asyncpg.create_pool(**db_connection_data)
     except asyncpg.exceptions.InvalidCatalogNameError:

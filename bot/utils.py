@@ -7,10 +7,10 @@ from database import get_pool_connect
 
 
 async def start_with() -> None:
-    logging.warning("Bot has been started!")
     pool_connect = await get_pool_connect()
     rg_msg_hd(dp)
     rg_middlewares(dp, pool_connect)
+    logging.warning("Bot has been started!")
 
 
 async def stop_with():
