@@ -19,6 +19,6 @@ async def start_with() -> None:
 
 
 async def stop_with():
-    await bot.session.close()
+    # await bot.session.close()
     await Database().connect.close()
     logging.warning("Bot has been stopped!")
