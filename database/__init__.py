@@ -3,12 +3,14 @@ import logging
 import aioredis
 import asyncpg
 from aiogram.fsm.storage.redis import RedisStorage
+from redis.asyncio.client import Redis
 
 from data.config import db_connection_data, main_db
 from data.config import redis_url
 from .db import Database
 
-redis = aioredis.from_url(redis_url)
+redis = Redis.from_url(redis_url)
+# redis = aioredis.from_url(redis_url)
 storage = RedisStorage(redis=redis)
 
 
