@@ -39,7 +39,7 @@ def start_bot():
         setup_application(app, dp, bot=bot)
 
         web.run_app(app, host='0.0.0.0', port=8080)
-
+        logging.info("Webhook started")
     finally:
         # await pool_connect.close()
         # await bot.session.close()
