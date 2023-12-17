@@ -37,9 +37,9 @@ def start_bot():
         webhook_requests_handler.register(app, path='/webhook')
 
         setup_application(app, dp, bot=bot)
-
-        web.run_app(app, host='0.0.0.0', port=8080)
         logging.info("Webhook started")
+        web.run_app(app, host='0.0.0.0', port=8080)
+
     except Exception as e:
         logging.error(e)
     finally:
