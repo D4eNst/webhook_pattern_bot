@@ -11,8 +11,6 @@ class Database:
     def __init__(self, connect: asyncpg.pool.Pool = None):
         self.connect = connect
         if connect is None:
-            if Database.pool_connect is None:
-                Database.pool_connect = self.get_pool_connect()
             self.connect = Database.pool_connect
         self.cursor = self.connect
 
