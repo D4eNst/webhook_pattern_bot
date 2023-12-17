@@ -1,12 +1,49 @@
 # from .models import
+import logging
+
 import asyncpg
+from data.config import db_connection_data, main_db
 
 
 class Database:
+    pool_connect = None
 
-    def __init__(self, connect: asyncpg.pool.Pool):
+    def __init__(self, connect: asyncpg.pool.Pool = None):
         self.connect = connect
+        if connect is None:
+            if Database.pool_connect is None:
+                Database.pool_connect = self.get_pool_connect()
+            self.connect = Database.pool_connect
         self.cursor = self.connect
+
+    @staticmethod
+    async def get_pool_connect() -> asyncpg.pool.Pool | None:
+        """
+            Returns a pool of database connections with data that is defined in config.py
+            Make sure that you have correctly specified all the data in the .env file.
+            :returns: An instance of ~asyncpg.pool.Pool.
+        """
+
+        pool_connect = None
+
+        logging.info("Creating pull")
+        try:
+            pool_connect = await asyncpg.create_pool(**db_connection_data)
+        except asyncpg.exceptions.InvalidCatalogNameError:
+            logging.info("Creating database")
+            user, password, database, host, port, *_ = db_connection_data.values()
+
+            conn = await asyncpg.connect(user=user, password=password, database=main_db, host=host, port=port)
+            await conn.execute(f'CREATE DATABASE {database}')
+            await conn.close()
+
+            pool_connect = await asyncpg.create_pool(**db_connection_data)
+            async with pool_connect.acquire() as connect:
+                await Database(connect).create_tables()
+        except Exception as e:
+            logging.error(f"Error in creating pool:\n{e}")
+
+        return pool_connect
 
     async def create_tables(self) -> None:
         await self.connect.execute("""
@@ -15,3 +52,5 @@ class Database:
                 first INT,
                 second TEXT
             )""")
+
+
