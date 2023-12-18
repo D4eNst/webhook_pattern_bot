@@ -1,8 +1,6 @@
 # from .models import
 import logging
-
 import asyncpg
-
 from bot.bot import config
 
 

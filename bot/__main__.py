@@ -23,7 +23,7 @@ def start_bot():
             secret_token=config.WEBHOOK_SECRET,
         )
 
-        webhook_requests_handler.register(app, path=config.WEBHOOK_PATH)  # '/webhook'
+        webhook_requests_handler.register(app, path=config.WEBHOOK_PATH)
 
         setup_application(app, dp, bot=bot)
         logging.info("Webhook started")
@@ -31,10 +31,6 @@ def start_bot():
 
     except Exception as e:
         logging.error(e)
-    finally:
-        # await pool_connect.close()
-        # await bot.session.close()
-        ...
 
 
 if __name__ == "__main__":
