@@ -21,7 +21,7 @@ REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
 
 POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
 POSTGRES_USER = os.environ["POSTGRES_USER"]
-DATABASE = "Change_your_database_name"
+DATABASE = "change_your_database_name"
 MAIN_DB = "postgres"
 POSTGRES_HOST = "postgres_db"
 
@@ -71,6 +71,6 @@ class Config:
 
         self.POSTGRES_HOST = postgres_host
         self.POSTGRES_PORT = postgres_port
-        self.DATABASE = database
+        self.DATABASE = database.lower()
         self.MAIN_DB = "postgres"
 
