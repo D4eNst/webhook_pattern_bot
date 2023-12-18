@@ -2,10 +2,9 @@ import logging
 
 from aiogram.methods import DeleteWebhook
 
-from bot.bot import dp, bot
+from bot.bot import dp, bot, config
 from bot.content.handlers import rg_msg_hd
 from bot.content.middlewares import rg_middlewares
-from data.config import BASE_WEBHOOK_URL, WEBHOOK_PATH, WEBHOOK_SECRET
 from database import Database
 
 
@@ -15,7 +14,7 @@ async def start_with() -> None:
         raise Exception("No pool connected")
 
     await bot(DeleteWebhook(drop_pending_updates=True))
-    await bot.set_webhook(f"{BASE_WEBHOOK_URL}{WEBHOOK_PATH}", secret_token=WEBHOOK_SECRET)
+    await bot.set_webhook(f"{config.BASE_WEBHOOK_URL}{config.WEBHOOK_PATH}", secret_token=config.WEBHOOK_SECRET)
 
     rg_msg_hd(dp)
     rg_middlewares(dp, pool_connect)

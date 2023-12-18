@@ -3,8 +3,7 @@ import logging
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp import web
 
-from data.config import WEBHOOK_SECRET, WEBHOOK_PATH
-from .bot import dp, bot
+from .bot import dp, bot, config
 from .utils import start_with, stop_with
 
 logging.basicConfig(level=logging.INFO)
@@ -21,10 +20,10 @@ def start_bot():
         webhook_requests_handler = SimpleRequestHandler(
             dispatcher=dp,
             bot=bot,
-            secret_token=WEBHOOK_SECRET,  # "WEBHOOK_SECRET"
+            secret_token=config.WEBHOOK_SECRET,
         )
 
-        webhook_requests_handler.register(app, path=WEBHOOK_PATH)  # '/webhook'
+        webhook_requests_handler.register(app, path=config.WEBHOOK_PATH)  # '/webhook'
 
         setup_application(app, dp, bot=bot)
         logging.info("Webhook started")

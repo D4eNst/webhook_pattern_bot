@@ -2,7 +2,8 @@
 import logging
 
 import asyncpg
-from data.config import db_connection_data, MAIN_DB
+
+from bot.bot import config
 
 
 class Database:
@@ -27,16 +28,15 @@ class Database:
 
         logging.info("Creating pull")
         try:
-            pool_connect = await asyncpg.create_pool(**db_connection_data)
+            pool_connect = await asyncpg.create_pool(**config.get_db_conn())
         except asyncpg.exceptions.InvalidCatalogNameError:
             logging.info("Creating database")
-            user, password, database, host, port, *_ = db_connection_data.values()
 
-            conn = await asyncpg.connect(user=user, password=password, database=MAIN_DB, host=host, port=port)
-            await conn.execute(f'CREATE DATABASE {database}')
+            conn = await asyncpg.connect(**config.get_db_conn(to_main=True))
+            await conn.execute(f'CREATE DATABASE {config.DATABASE}')
             await conn.close()
 
-            pool_connect = await asyncpg.create_pool(**db_connection_data)
+            pool_connect = await asyncpg.create_pool(**config.get_db_conn())
             async with pool_connect.acquire() as connect:
                 await Database(connect).create_tables()
         except Exception as e:

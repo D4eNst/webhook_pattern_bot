@@ -8,31 +8,28 @@ import os
 # TOKEN
 # ADMIN_ID
 
-TOKEN = os.environ["TOKEN"]
-ADMIN_ID = int(os.environ["ADMIN_ID"])
-BASE_WEBHOOK_URL = "https://test1.d4enst.tech"
-WEBHOOK_SECRET = "WEBHOOK_SECRET"
-WEBHOOK_PATH = "/webhook"
-
-REDIS_HOST = "redis"
-REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
-REDIS_PORT = 6379
-REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
-
-POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
-POSTGRES_USER = os.environ["POSTGRES_USER"]
-DATABASE = "change_your_database_name"
-MAIN_DB = "postgres"
-POSTGRES_HOST = "postgres_db"
-
-db_connection_data = {
-    "user": POSTGRES_USER,
-    "password": POSTGRES_PASSWORD,
-    "database": DATABASE,
-    "host": POSTGRES_HOST,
-    "port": 5432,
-    "command_timeout": 60
-}
+# TOKEN = os.environ["TOKEN"]
+# ADMIN_ID = int(os.environ["ADMIN_ID"])
+#
+# REDIS_HOST = "redis"
+# REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
+# REDIS_PORT = 6379
+# REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
+#
+# POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
+# POSTGRES_USER = os.environ["POSTGRES_USER"]
+# DATABASE = "change_your_database_name"
+# MAIN_DB = "postgres"
+# POSTGRES_HOST = "postgres_db"
+#
+# db_connection_data = {
+#     "user": POSTGRES_USER,
+#     "password": POSTGRES_PASSWORD,
+#     "database": DATABASE,
+#     "host": POSTGRES_HOST,
+#     "port": 5432,
+#     "command_timeout": 60
+# }
 
 
 class Config:
@@ -44,6 +41,9 @@ class Config:
             REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
             POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
             POSTGRES_USER = os.environ["POSTGRES_USER"]
+            BASE_WEBHOOK_URL = os.environ["BASE_WEBHOOK_URL"]
+            WEBHOOK_SECRET = os.environ["WEBHOOK_SECRET"]
+            WEBHOOK_PATH = os.environ["WEBHOOK_PATH"]
             _initialize = True
         except Exception as e:
             logging.error(f"Error reading environment variables. Make sure that all variables are present "
@@ -54,6 +54,7 @@ class Config:
                  redis_port=6379,
                  postgres_host="postgres_db",
                  postgres_port=5432,
+                 main_db="postgres",
                  database="Change_your_database_name",
                  ):
         """
@@ -65,12 +66,20 @@ class Config:
         :param database:
         """
         self.REDIS_HOST = redis_host
-
         self.REDIS_PORT = redis_port
-        self.REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
+        self.REDIS_URL = f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}"
 
         self.POSTGRES_HOST = postgres_host
         self.POSTGRES_PORT = postgres_port
         self.DATABASE = database.lower()
-        self.MAIN_DB = "postgres"
+        self.MAIN_DB = main_db
 
+    def get_db_conn(self, to_main=False):
+        return {
+            "user": self.POSTGRES_USER,
+            "password": self.POSTGRES_PASSWORD,
+            "database": self.MAIN_DB if to_main else self.DATABASE,
+            "host": self.POSTGRES_HOST,
+            "port": self.POSTGRES_PORT,
+            "command_timeout": 60
+        }
